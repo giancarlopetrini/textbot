@@ -30,6 +30,9 @@ resource "aws_iam_role" "lex-lambda-role" {
 POLICY
 }
 
+variable "twilio_sid" {}
+variable "twilio_auth" {}
+
 resource "aws_lambda_function" "lex-lambda" {
   function_name = "lex-handler"
   s3_bucket     = "${aws_s3_bucket.lambda-file.bucket}"
@@ -37,4 +40,11 @@ resource "aws_lambda_function" "lex-lambda" {
   handler       = "lambda"
   runtime       = "go1.x"
   role          = "${aws_iam_role.lex-lambda-role.arn}"
+
+  environment {
+    variables {
+      twilio_sid  = "${var.twilio_sid}"
+      twilio_auth = "${var.twilio_auth}"
+    }
+  }
 }
