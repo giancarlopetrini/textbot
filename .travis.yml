@@ -5,6 +5,7 @@ before_script:
 
 script:
 - zip ./build lambda
+- ls -a
 
 before_deploy:
 - cd $TRAVIS_BUILD_DIR
