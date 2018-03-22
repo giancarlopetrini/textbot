@@ -1,11 +1,11 @@
 language: go
 before_script:
 - go vet ./lambda/...
-- env GOOS=linux ARCH=amd64 go build lambda/lambda.go
+- env GOOS=linux ARCH=amd64 go build -o build/lambda lambda/lambda.go
 
 script:
-- zip ./lambda
-- cp lambda.zip build
+- zip build/lambda build/lambda.zip
+- rm build/lambda
 
 before_deploy:
 - cd $TRAVIS_BUILD_DIR
