@@ -11,9 +11,10 @@ import (
 )
 
 // Handler - lambda handler for processing inbound twiML
+// may remove gatewayproxyrequest, in favor of a body mapping setup
 func Handler(request events.APIGatewayProxyRequest) error {
 
-	// create lexruntime client, maybe add .WithCredentials if needed
+	// maybe add .WithCredentials if needed
 	svc := lexruntimeservice.New(session.New(), aws.NewConfig().WithRegion("us-east-1"))
 	botAlias := "dev"
 	botName := "BookTrip"

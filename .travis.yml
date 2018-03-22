@@ -1,0 +1,21 @@
+language: go
+before_script:
+- go vet ./lambda/...
+- env GOOS=linux ARCH=amd64 go build lambda/lambda.go
+
+script:
+- zip ./lambda lambda
+- cp lambda.zip build
+
+
+before_deploy:
+- cd $TRAVIS_BUILD_DIR
+
+deploy:
+  provider: s3
+  access_key_id: $ACCESS_KEY_ID
+  secret_access_key: $SECRET_ACCESS_KEY 
+  bucket: giancarlopetrini-lambda-file
+  skip_cleanup: true
+  region: us-east-1
+  local_dir: build
