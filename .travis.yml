@@ -4,7 +4,7 @@ before_script:
 - env GOOS=linux ARCH=amd64 go build -o build/lambda lambda/lambda.go
 
 script:
-- zip ./build/lambda lambda.zip
+- zip ./build/lambda lambda
 - rm ./build/lambda
 
 before_deploy:
