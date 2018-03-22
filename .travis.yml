@@ -4,8 +4,8 @@ before_script:
 - env GOOS=linux ARCH=amd64 go build -o build/lambda lambda/lambda.go
 
 script:
-- zip ./build lambda
-- ls -a
+- zip ./build/lambda lambda.zip
+- rm ./build/lambda
 
 before_deploy:
 - cd $TRAVIS_BUILD_DIR
