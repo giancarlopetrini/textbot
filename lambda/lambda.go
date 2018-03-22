@@ -15,14 +15,19 @@ func Handler(request events.APIGatewayProxyRequest) error {
 
 	// create lexruntime client, maybe add .WithCredentials if needed
 	svc := lexruntimeservice.New(session.New(), aws.NewConfig().WithRegion("us-east-1"))
-	input := &lexruntimeservice.PostTextInput{
-		BotAlias:          `location:"uri" locationName:"botAlias" type:"string" required:"true"`,
-		BotName:           `location:"uri" locationName:"botName" type:"string" required:"true"`,
-		InputText:         `locationName:"inputText" min:"1" type:"string" required:"true"`,
-		SessionAttributes: `locationName:"sessionAttributes" type:"map"`,
-		UserId:            `location:"uri" locationName:"userId" min:"2" type:"string" required:"true"`,
+	botAlias := "dev"
+	botName := "BookTrip"
+	inputText := "TEST INPUT"
+	sessionAttr := make(map[string]*string)
+	userID := "testuserID"
+	input := lexruntimeservice.PostTextInput{
+		BotAlias:          &botAlias,
+		BotName:           &botName,
+		InputText:         &inputText,
+		SessionAttributes: sessionAttr,
+		UserId:            &userID,
 	}
-	svc.PostText(input)
+	svc.PostText(&input)
 	return nil
 }
 
