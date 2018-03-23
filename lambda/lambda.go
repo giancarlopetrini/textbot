@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"os"
+	"strings"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -32,7 +33,7 @@ func Handler(request events.APIGatewayProxyRequest) error {
 	botName := "BookTrip"
 	inputText := smsResponse.Body
 	sessionAttr := make(map[string]*string)
-	userID := "testuserID"
+	userID := strings.Replace(smsResponse.From, "+", "", -1)
 	input := lexruntimeservice.PostTextInput{
 		BotAlias:          &botAlias,
 		BotName:           &botName,
