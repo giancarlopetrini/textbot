@@ -41,7 +41,17 @@ func Handler(request events.APIGatewayProxyRequest) error {
 		SessionAttributes: sessionAttr,
 		UserId:            &userID,
 	}
-	svc.PostText(&input)
+	outputText, err := svc.PostText(&input)
+	if err != nil {
+		log.Printf("Error getting PostTextOuput from Lex: %s", err)
+	}
+	_, except, err = twilio.SendSMS(os.Getenv("twilio_num"), smsResponse.From, *outputText.Message, "", "")
+	if except != nil {
+		log.Printf("Exception thrown by Twilio while sending response from Lex: %v", except)
+	}
+	if err != nil {
+		log.Printf("Error calling twilio.SendSMS method: %s", err)
+	}
 	return nil
 }
 

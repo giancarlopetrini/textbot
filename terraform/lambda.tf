@@ -20,6 +20,7 @@ POLICY
 
 variable "twilio_sid" {}
 variable "twilio_auth" {}
+variable "twilio_num" {}
 
 resource "aws_lambda_function" "lex-lambda" {
   function_name = "lex-handler"
@@ -33,6 +34,7 @@ resource "aws_lambda_function" "lex-lambda" {
     variables {
       twilio_sid  = "${var.twilio_sid}"
       twilio_auth = "${var.twilio_auth}"
+      twilio_num  = "${var.twilio_num}"
     }
   }
 }
