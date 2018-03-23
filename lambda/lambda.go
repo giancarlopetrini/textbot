@@ -14,10 +14,13 @@ import (
 	"github.com/sfreiberg/gotwilio"
 )
 
+var (
+	twilio = gotwilio.NewTwilioClient(os.Getenv("twilio_sid"), os.Getenv("twilio_auth"))
+)
+
 // Handler - lambda handler
 // may remove gatewayproxyrequest, in favor of a body mapping setup
 func Handler(request events.APIGatewayProxyRequest) error {
-	twilio := gotwilio.NewTwilioClient(os.Getenv("twilio_sid"), os.Getenv("twilio_auth"))
 	smsResponse, except, err := twilio.GetSMS(os.Getenv("twilio_sid"))
 	if err != nil {
 		log.Printf("Can't get SMSResponse %s", err)
