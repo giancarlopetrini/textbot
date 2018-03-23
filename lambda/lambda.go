@@ -14,7 +14,7 @@ import (
 	"github.com/sfreiberg/gotwilio"
 )
 
-// Handler - lambda handler for processing inbound twiML
+// Handler - lambda handler
 // may remove gatewayproxyrequest, in favor of a body mapping setup
 func Handler(request events.APIGatewayProxyRequest) error {
 	twilio := gotwilio.NewTwilioClient(os.Getenv("twilio_sid"), os.Getenv("twilio_auth"))

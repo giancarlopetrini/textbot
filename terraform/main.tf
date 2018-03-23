@@ -16,6 +16,8 @@ resource "aws_s3_bucket" "terraform-state" {
   }
 }
 
+variable iam_account {}
+
 resource "aws_s3_bucket_policy" "terraform-state-policy" {
   bucket = "${aws_s3_bucket.terraform-state.id}"
 
@@ -25,7 +27,7 @@ resource "aws_s3_bucket_policy" "terraform-state-policy" {
     "Statement": [{
             "Effect": "Allow",
             "Principal": {
-                "AWS": "arn:aws:iam::511386816865:user/tfbuild"
+                "AWS": "arn:aws:iam::${var.iam_account}:user/tfbuild"
             },
             "Action": "s3:ListBucket",
             "Resource": "arn:aws:s3:::terraform-state-s3-giancarlopetrini"
@@ -33,7 +35,7 @@ resource "aws_s3_bucket_policy" "terraform-state-policy" {
         {
             "Effect": "Allow",
             "Principal": {
-                "AWS": "arn:aws:iam::511386816865:user/tfbuild"
+                "AWS": "arn:aws:iam::${var.iam_account}:user/tfbuild"
             },
             "Action": ["s3:GetObject", "s3:PutObject"],
             "Resource": "arn:aws:s3:::terraform-state-s3-giancarlopetrini/terraform.tfstate"
