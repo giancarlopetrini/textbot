@@ -65,7 +65,7 @@ exports.handler = (event, context, callback) => {
                     callback(err, twimlResponse.toString());
                 } else {
                     console.log(data); // got something back from Amazon Lex
-                    twimlResponse.message(data.message);
+                    twimlResponse.message(data.message); // create twiml response (xml)
                     callback(null, twimlResponse.toString());
                 }
             });
