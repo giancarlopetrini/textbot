@@ -1,7 +1,7 @@
 package main
 
 import (
-	"log"
+	"fmt"
 	"os"
 
 	"github.com/aws/aws-lambda-go/lambda"
@@ -14,10 +14,20 @@ var (
 	twilio     = gotwilio.NewTwilioClient(twilioSid, twilioAuth)
 )
 
+// Request - pulling json from API Gateway, originating from Twilio
+type Request struct {
+	Body string `json:"body-json"`
+}
+
+// Response - will eventually by xml (TwiML) back to twilio, i think...
+type Response struct {
+	Res string `json:"response"`
+}
+
 // Handler - invoked by twilio request to api gateway
-func Handler(request []byte) error {
-	log.Printf("Twilio inbound SMS::: %v", request)
-	return nil
+func Handler(request Request) (Response, error) {
+	fmt.Println(request.Body)
+	return Response{Res: "Nailed It"}, nil
 }
 
 func main() {
