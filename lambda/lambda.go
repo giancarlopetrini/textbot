@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"errors"
 	"log"
 	"net/url"
 	"os"
@@ -25,16 +25,11 @@ type Request struct {
 	Body string `json:"body-json"`
 }
 
-// Response - will eventually by xml (TwiML) back to twilio, i think...
-type Response struct {
-	Res string `json:"response"`
-}
-
 // Handler - invoked by twilio request to api gateway
-func Handler(request Request) (Response, error) {
+func Handler(request Request) error {
 	if request.Body == "" {
 		log.Fatalf("No text received from twilio")
-		return Response{}, nil
+		return errors.New("No Body Found")
 	}
 	log.Printf("Original Body from Twilio: %s", request.Body)
 
@@ -64,16 +59,16 @@ func Handler(request Request) (Response, error) {
 	}
 	log.Printf("%v \n", outputText)
 
-	_, exception, err := twilio.SendSMS(os.Getenv("twilio_num"), userID, *outputText.Message, "", "")
+	_, exception, err := twilio.SendSMS(os.Getenv("twilio_num"), "+"+userID, *outputText.Message, "", "")
 	if exception != nil {
 		log.Printf("Exception thrown by Twilio while sending response from Lex: %v", exception)
-		return Response{Res: fmt.Sprint(exception)}, nil
+		return nil
 	}
 	if err != nil {
 		log.Printf("Error calling twilio.SendSMS method: %s", err)
-		return Response{Res: fmt.Sprint(err)}, err
+		return err
 	}
-	return Response{}, nil
+	return nil
 
 }
 
