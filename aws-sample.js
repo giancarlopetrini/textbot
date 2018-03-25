@@ -47,6 +47,7 @@ exports.handler = (event, context, callback) => {
             //	************************
             //	Message is valid so now we prepare to pass it along to the Lex API.
             //	************************
+            console.log(twilioSMS);
             AWS.config.region = 'us-east-1';
             var lexruntime = new AWS.LexRuntime();
             var userNumber = twilioSMS.From.replace('+', '');

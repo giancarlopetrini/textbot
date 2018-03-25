@@ -10,6 +10,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/lexruntimeservice"
+	"github.com/pasztorpisti/qs"
 	"github.com/sfreiberg/gotwilio"
 )
 
@@ -19,8 +20,8 @@ var (
 	twilio     = gotwilio.NewTwilioClient(twilioSid, twilioAuth)
 )
 
-// Request - pulling json from API Gateway, originating from Twilio
-type Request struct {
+// OrigRequest - pulling json from API Gateway, originating from Twilio
+type OrigRequest struct {
 	Body string `json:"body-json"`
 }
 
@@ -29,17 +30,33 @@ type Response struct {
 	Res string `json:"response"`
 }
 
+// Request - struct for parsing xml post
+type Request struct {
+	ToCountry     string
+	ToState       string
+	SmsMessageSid string
+	Body          string
+}
+
 // Handler - invoked by twilio request to api gateway
-func Handler(request Request) (Response, error) {
+func Handler(request OrigRequest) (Response, error) {
 	if request.Body == "" {
 		log.Fatalf("No text received from twilio")
 		return Response{}, nil
 	}
+	log.Printf("Body from Twilio: %s", request.Body)
+
+	var r Request
+	if err := qs.Unmarshal(&r, request.Body); err != nil {
+		log.Printf("Unable to parse inbound XML: %s", err)
+	}
+	log.Printf("After unmarshalling: %v", &r)
+
 	// maybe add .WithCredentials if needed
 	svc := lexruntimeservice.New(session.New(), aws.NewConfig().WithRegion("us-east-1"))
 	botAlias := "dev"
 	botName := "BookTrip"
-	inputText := strings.TrimRight(request.Body, "&Body")
+	inputText := strings.TrimRight(request.Body, "&Body=")
 	sessionAttr := make(map[string]*string)
 	userID := strings.TrimLeft(strings.TrimRight(request.Body, "&"), "=")
 	input := lexruntimeservice.PostTextInput{
