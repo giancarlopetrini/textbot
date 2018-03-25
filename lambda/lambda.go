@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"net/url"
 	"os"
 	"strings"
 
@@ -10,7 +11,6 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/lexruntimeservice"
-	"github.com/pasztorpisti/qs"
 	"github.com/sfreiberg/gotwilio"
 )
 
@@ -20,8 +20,8 @@ var (
 	twilio     = gotwilio.NewTwilioClient(twilioSid, twilioAuth)
 )
 
-// OrigRequest - pulling json from API Gateway, originating from Twilio
-type OrigRequest struct {
+// Request - pulling json from API Gateway, originating from Twilio
+type Request struct {
 	Body string `json:"body-json"`
 }
 
@@ -30,35 +30,27 @@ type Response struct {
 	Res string `json:"response"`
 }
 
-// Request - struct for parsing xml post
-type Request struct {
-	ToCountry     string
-	ToState       string
-	SmsMessageSid string
-	Body          string
-}
-
 // Handler - invoked by twilio request to api gateway
-func Handler(request OrigRequest) (Response, error) {
+func Handler(request Request) (Response, error) {
 	if request.Body == "" {
 		log.Fatalf("No text received from twilio")
 		return Response{}, nil
 	}
-	log.Printf("Body from Twilio: %s", request.Body)
+	log.Printf("Original Body from Twilio: %s", request.Body)
 
-	var r Request
-	if err := qs.Unmarshal(&r, request.Body); err != nil {
-		log.Printf("Unable to parse inbound XML: %s", err)
+	twilioIn, err := url.ParseQuery(request.Body)
+	if err != nil {
+		log.Fatalf("Unable to parse inbound info: %s", err)
 	}
-	log.Printf("After unmarshalling: %v", &r)
+	log.Printf("Parsed twilio inbound: %s", twilioIn)
 
 	// maybe add .WithCredentials if needed
 	svc := lexruntimeservice.New(session.New(), aws.NewConfig().WithRegion("us-east-1"))
 	botAlias := "dev"
 	botName := "BookTrip"
-	inputText := strings.TrimRight(request.Body, "&Body=")
+	inputText := (strings.Join(twilioIn["Body"], " "))
 	sessionAttr := make(map[string]*string)
-	userID := strings.TrimLeft(strings.TrimRight(request.Body, "&"), "=")
+	userID := (strings.Replace(strings.Join(twilioIn["From"], ""), "+", "", -1))
 	input := lexruntimeservice.PostTextInput{
 		BotAlias:          &botAlias,
 		BotName:           &botName,
@@ -70,6 +62,8 @@ func Handler(request OrigRequest) (Response, error) {
 	if err != nil {
 		log.Printf("Error getting PostTextOuput from Lex: %s", err)
 	}
+	log.Printf("%v \n", outputText)
+
 	_, exception, err := twilio.SendSMS(os.Getenv("twilio_num"), userID, *outputText.Message, "", "")
 	if exception != nil {
 		log.Printf("Exception thrown by Twilio while sending response from Lex: %v", exception)
