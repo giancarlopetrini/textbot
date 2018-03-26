@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"log"
 	"net/url"
 	"os"
@@ -35,7 +36,10 @@ func Handler(request Request) error {
 
 	twilioIn, err := url.ParseQuery(request.Body)
 	if err != nil {
-		log.Fatalf("Unable to parse inbound info: %s", err)
+		return errors.New("Unable to parse input from twilio: , " + fmt.Sprint(err))
+	}
+	if fmt.Sprint(twilioIn["AccountSID"]) != twilioSid {
+		return errors.New("Sending Twilio <" + fmt.Sprint(twilioIn["AccountSID"]) + ">account not authorized for Lex usage")
 	}
 	log.Printf("Parsed twilio inbound: %s", twilioIn)
 
