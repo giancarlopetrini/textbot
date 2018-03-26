@@ -75,6 +75,13 @@ resource "aws_api_gateway_integration" "textbot-apigw-integration" {
   passthrough_behavior = "WHEN_NO_TEMPLATES"
 }
 
+resource "aws_lambda_permission" "textbot-apigw" {
+  statement_id  = "AllowAPIGatewayInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = "${aws_lambda_function.textbot-handler.arn}"
+  principal     = "apigateway.amazonaws.com"
+}
+
 resource "aws_api_gateway_deployment" "textbot-apigw-deploy" {
   depends_on = [
     "aws_api_gateway_integration.textbot-apigw-integration",

@@ -38,7 +38,7 @@ func Handler(request Request) error {
 	if err != nil {
 		return errors.New("Unable to parse input from twilio: , " + fmt.Sprint(err))
 	}
-	if fmt.Sprint(twilioIn["AccountSID"]) != twilioSid {
+	if fmt.Sprint(twilioIn["AccountSid"]) != twilioSid {
 		return errors.New("Sending Twilio <" + fmt.Sprint(twilioIn["AccountSID"]) + ">account not authorized for Lex usage")
 	}
 	log.Printf("Parsed twilio inbound: %s", twilioIn)

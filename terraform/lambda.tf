@@ -56,7 +56,7 @@ variable "twilio_auth" {}
 variable "twilio_num" {}
 
 resource "aws_lambda_function" "textbot-handler" {
-  function_name = "lex-handler"
+  function_name = "textbot-lex-handler"
   s3_bucket     = "${aws_s3_bucket.lambda-file.bucket}"
   s3_key        = "lambda.zip"
   handler       = "lambda"
