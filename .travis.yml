@@ -1,6 +1,7 @@
 language: go
 before_script:
 - go vet ./lambda/...
+- go get -t ./lambda/...
 - env GOOS=linux ARCH=amd64 go build -o build/lambda lambda/lambda.go
 
 script:
