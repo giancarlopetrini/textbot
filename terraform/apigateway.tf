@@ -1,3 +1,4 @@
+/*
 resource "aws_api_gateway_rest_api" "textbot-apigw" {
   name        = "textbot-apigw"
   description = "processing twilio and lambda connection"
@@ -79,6 +80,7 @@ resource "aws_lambda_permission" "textbot-apigw" {
   statement_id  = "AllowAPIGatewayInvoke"
   action        = "lambda:InvokeFunction"
   function_name = "${aws_lambda_function.textbot-handler.arn}"
+  // add a source arn to this resource with api gateway url
   principal     = "apigateway.amazonaws.com"
 }
 
@@ -94,3 +96,5 @@ resource "aws_api_gateway_deployment" "textbot-apigw-deploy" {
 output "api_invoke_url" {
   value = "${aws_api_gateway_deployment.textbot-apigw-deploy.invoke_url}"
 }
+*/
+

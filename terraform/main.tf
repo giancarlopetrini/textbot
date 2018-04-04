@@ -3,13 +3,13 @@ provider "aws" {
   profile = "tfbuild"
 }
 
-variable iam_account {}
+variable "s3_bucket_name" {}
 
 resource "aws_s3_bucket" "lambda-file" {
-  bucket        = "giancarlopetrini-lambda-file"
+  bucket        = "${var.s3_bucket_name}"
   force_destroy = true
 
   tags {
-    Name = "giancarlopetrini-lambda-file"
+    Name = "${var.s3_bucket_name}"
   }
 }

@@ -18,7 +18,7 @@ resource "aws_iam_role" "lambda-role-textbot-handler" {
 POLICY
 }
 
-resource "aws_iam_role_policy" "lambda-role-for-lex_lambda-lex-policy" {
+resource "aws_iam_role_policy" "lambda-role-for-lex" {
   name = "lambda-lex-policy"
   role = "${aws_iam_role.lambda-role-textbot-handler.name}"
 
