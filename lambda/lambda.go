@@ -59,7 +59,7 @@ func Handler(request Request) error {
 	}
 	outputText, err := svc.PostText(&input)
 	if err != nil {
-		log.Printf("Error getting PostTextOuput from Lex: %s", err)
+		log.Printf("Error getting PostTextOuput from Lex: %v", err)
 	}
 	log.Printf("%v \n", outputText)
 
